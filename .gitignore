@@ -1,7 +1,7 @@
 # Ignore server files for safety
 .htaccess
 .htpasswd
-cfg/*
+# cfg/*
 !cfg/conf.sample.php
 !cfg/.htaccess
 
