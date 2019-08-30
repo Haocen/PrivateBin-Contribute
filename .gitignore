@@ -14,7 +14,7 @@ doc/*
 
 # Ignore developers composer status so it isn't accidentally checked in,
 # see https://github.com/PrivateBin/PrivateBin/issues/84
-composer.lock
+# composer.lock
 
 # Ignore vendor dir of Composer except PHP files
 vendor/*.*
