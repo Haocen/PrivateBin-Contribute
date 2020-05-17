@@ -2068,7 +2068,7 @@ jQuery.PrivateBin = (function($, RawDeflate) {
             const supported = window.document.queryCommandSupported && window.document.queryCommandSupported('copy');
             if (!supported) {
                 window.alert(
-                    I18n._('Your browser does not support copy text programmatically')
+                    I18n._('Your browser does not support copying text programmatically')
                 );
                 return false;
             } else {
