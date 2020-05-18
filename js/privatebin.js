@@ -362,6 +362,36 @@ jQuery.PrivateBin = (function($, RawDeflate) {
         };
 
         /**
+         * converts size in bytes to human readable string
+         *
+         * The string is expected to be optional digits, followed by a time.
+         * Supported times are: min, hour, day, month, year, never
+         * Examples: 5min, 13hour, never
+         *
+         * @name Helper.humanizeBytes
+         * @function
+         * @param  {number} bytes
+         * @param {decimals} decimals - optional
+         * @return {String}
+         */
+        me.humanizeBytes = function(bytes, decimals = 2) {
+            const sizes = [
+                I18n._('Bytes'), I18n._('KB'), I18n._('MB'), I18n._('GB'),
+                I18n._('TB'), I18n._('PB'), I18n._('EB'), I18n._('ZB'), I18n._('YB')
+            ];
+            const signifierByte = I18n._('Byte');
+            if (bytes === 0) return me.sprintf('0 %s', sizes[0]);
+            if (bytes === 1) return me.sprintf('1 %s', signifierByte);
+        
+            const k = 1024;
+            const dm = decimals < 0 ? 0 : decimals;
+        
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+        
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+        };
+
+        /**
          * text range selection
          *
          * @see    {@link https://stackoverflow.com/questions/985272/jquery-selecting-text-in-an-element-akin-to-highlighting-with-your-mouse}
@@ -2867,7 +2897,7 @@ jQuery.PrivateBin = (function($, RawDeflate) {
                 $attachmentLink.prop('download', fileName);
             }
 
-            me.handleBlobAttachmentPreview($attachmentPreview, blobUrl, mediaType);
+            me.handleBlobAttachmentPreview($attachmentPreview, blobUrl, mediaType, fileName, blob.size);
         };
 
         /**
@@ -3075,7 +3105,7 @@ jQuery.PrivateBin = (function($, RawDeflate) {
                     $attachmentLink.prop('href', blobUrl);
                     $attachmentLink.prop('download', loadedFile.name);
 
-                    me.handleBlobAttachmentPreview($attachmentPreview, blobUrl, loadedFile.type);
+                    me.handleBlobAttachmentPreview($attachmentPreview, blobUrl, loadedFile.type, loadedFile.name, loadedFile.size);
                     
                     if (Editor.isPreview()) {
                         AttachmentViewer.showAttachmentPreview();
@@ -3092,11 +3122,13 @@ jQuery.PrivateBin = (function($, RawDeflate) {
          *
          * @name   AttachmentViewer.handleBlobAttachmentPreview
          * @function
-         * @argument {jQuery} $targetElement element where the preview should be appended
-         * @argument {string} file as a blob URL
-         * @argument {string} mime type
+         * @param {jQuery} $targetElement element where the preview should be appended
+         * @param {string} blobUrl as a blob URL
+         * @param {string} mimeType type
+         * @param {string} fileName
+         * @param {number} sizeInBytes
          */
-        me.handleBlobAttachmentPreview = function ($targetElement, blobUrl, mimeType) {
+        me.handleBlobAttachmentPreview = function ($targetElement, blobUrl, mimeType, fileName = null, sizeInBytes = 0) {
             if (blobUrl) {
                 attachmentHasPreview = true;
                 $targetElement.empty();
@@ -3142,6 +3174,25 @@ jQuery.PrivateBin = (function($, RawDeflate) {
                     );
                 } else {
                     attachmentHasPreview = false;
+                }
+                if (typeof fileName === 'string' && typeof sizeInBytes === 'number' && sizeInBytes > 0) {
+                    const $panel = $('<div>').addClass(['panel', 'panel-default']);
+                    const $panelHeading = $('<div>').addClass('panel-heading');
+                    const $fileName = $('<span>');
+                    const $fileSize = $('<span>').addClass('badge');
+                    $fileName.text(Helper.sprintf('%s ', fileName));
+                    $fileSize.text(Helper.humanizeBytes(sizeInBytes));
+                    $panel.append($panelHeading);
+                    $panelHeading.append($fileName, $fileSize);
+                    const $preview = $targetElement.children();
+                    if ($preview.length > 0) {
+                        const $panelBody = $('<div>').addClass('panel-body');
+                        // move preview into panel body
+                        $panel.append($panelBody.append($preview));
+                    }
+                    $targetElement.append($panel);
+                    // consider preview available if name and size can be displyed
+                    attachmentHasPreview = true;
                 }
             }
         };
