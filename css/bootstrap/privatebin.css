@@ -265,3 +265,12 @@ li.L0, li.L1, li.L2, li.L3, li.L5, li.L6, li.L7, li.L8 {
 .modal .modal-content button {
 	margin: 0.5em 0;
 }
+
+.file-name {
+	word-wrap: break-word;
+}
+
+/* file name may also be displayed in alert */
+.alert {
+	word-wrap: break-word;
+}

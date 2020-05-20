@@ -3224,7 +3224,7 @@ jQuery.PrivateBin = (function($, RawDeflate) {
                 if (typeof fileName === 'string' && typeof sizeInBytes === 'number' && sizeInBytes > 0) {
                     const $panel = $('<div>').addClass(['panel', 'panel-default']);
                     const $panelHeading = $('<div>').addClass('panel-heading');
-                    const $fileName = $('<span>');
+                    const $fileName = $('<span>').addClass('file-name');
                     const $fileSize = $('<span>').addClass('badge');
                     $fileName.text(Helper.sprintf('%s ', fileName));
                     $fileSize.text(Helper.humanizeBytes(sizeInBytes));
