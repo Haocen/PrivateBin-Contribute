@@ -1871,6 +1871,58 @@ jQuery.PrivateBin = (function($, RawDeflate) {
         };
 
         /**
+         * display ticking remaining time message
+         *
+         * This automatically passes the text to I18n for translation.
+         *
+         * @name   Alert.showTickingTimeRemaining
+         * @function
+         * @param  {number} ttlInSeconds     paste remaining time to live in seconds
+         */
+        me.showTickingTimeRemaining = function(ttlInSeconds)
+        {
+            const startTimestamp = new Date();
+            const updateTimeRemaining = () => {
+                const currentTimestamp = new Date();
+                // show expiration earlier, not later
+                const secondsPassed = Math.ceil((currentTimestamp.valueOf() - startTimestamp.valueOf()) / 1000);
+                // secondsLeft can be negative value
+                const secondsLeft = ttlInSeconds - secondsPassed;
+                if (secondsLeft > 0) {
+                    const expiration = Helper.secondsToHuman(secondsLeft),
+                    expirationLabel = [
+                        'This document will expire in %d ' + expiration[1] + '.',
+                        'This document will expire in %d ' + expiration[1] + 's.'
+                    ];
+
+                    me.showRemaining([expirationLabel, expiration[0]]);
+                } else {
+                    me.showRemaining('This document has expired.');
+                }
+            };
+            try {
+                // update display every half second
+                const internalId = setInterval(updateTimeRemaining, 500);
+                 // advanced tech, not meant for old browsers
+                const handleMutation = (mutationsList, currentObserver) => {
+                    for (const mutation of mutationsList) {
+                        if (mutation.attributeName === 'class' && mutation.target.classList.contains('hidden')) {
+                            clearInterval(internalId);
+                            currentObserver.disconnect();
+                            break;
+                        }
+                    }
+                };
+                const observer = new MutationObserver(handleMutation);
+                observer.observe($remainingTime.get(0), { attributes: true, childList: false, subtree: false })
+            } catch (error) {
+                console.error(error);
+                // fallback to display paste expiration statically
+                updateTimeRemaining();
+            }
+        };
+
+        /**
          * display remaining message
          *
          * This automatically passes the text to I18n for translation.
@@ -2169,13 +2221,7 @@ jQuery.PrivateBin = (function($, RawDeflate) {
                 $remainingTime.addClass('foryoureyesonly');
             } else if (paste.getTimeToLive() > 0) {
                 // display paste expiration
-                let expiration = Helper.secondsToHuman(paste.getTimeToLive()),
-                    expirationLabel = [
-                        'This document will expire in %d ' + expiration[1] + '.',
-                        'This document will expire in %d ' + expiration[1] + 's.'
-                    ];
-
-                Alert.showRemaining([expirationLabel, expiration[0]]);
+                Alert.showTickingTimeRemaining(paste.getTimeToLive());
                 $remainingTime.removeClass('foryoureyesonly');
             } else {
                 // never expires
