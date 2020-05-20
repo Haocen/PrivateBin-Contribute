@@ -4185,6 +4185,9 @@ jQuery.PrivateBin = (function($, RawDeflate) {
             // send button is outside TopNav so it won't cause height change
             $sendButton.addClass('hidden');
             await me.collapseBar();
+            // $newButton may not be hidden even when viewButtonsDisplayed === false && createButtonsDisplayed === false
+            // for example, on could not get paste page
+            $newButton.addClass('hidden');
             me.hideViewButtons();
             me.hideCreateButtons();
         };
