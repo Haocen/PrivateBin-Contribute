@@ -3182,13 +3182,13 @@ jQuery.PrivateBin = (function($, RawDeflate) {
                     $targetElement.append(
                         $('<img>')
                             .prop('src', blobUrl)
-                            .addClass('img-thumbnail')
+                            .addClass('img-responsive center-block')
                     );
                 } else if (mimeType.match(/video\//i)) {
                     $targetElement.append(
                         $('<video>')
                             .prop('controls', 'true')
-                            .addClass('img-thumbnail')
+                            .addClass('img-responsive center-block')
 
                             .append(
                                 $('<source>')
@@ -3232,9 +3232,8 @@ jQuery.PrivateBin = (function($, RawDeflate) {
                     $panelHeading.append($fileName, $fileSize);
                     const $preview = $targetElement.children();
                     if ($preview.length > 0) {
-                        const $panelBody = $('<div>').addClass('panel-body');
-                        // move preview into panel body
-                        $panel.append($panelBody.append($preview));
+                        // move preview into panel
+                        $panel.append($preview);
                     }
                     $targetElement.append($panel);
                     // consider preview available if name and size can be displyed
