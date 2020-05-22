@@ -33,7 +33,7 @@ defaultformatter = "plaintext"
 sizelimit = 10485760
 
 ; template to include, default is "bootstrap" (tpl/bootstrap.php)
-template = "bootstrap"
+template = "bootstrap-auto"
 
 ; (optional) notice to display
 ; notice = "Note: This is a test service: Data may be deleted anytime. Kittens will die if you abuse this service."
@@ -79,7 +79,7 @@ languageselection = false
 ;   async functions and display an error if not and for Chrome to enable
 ;   webassembly support (used for zlib compression). You can remove it if Chrome
 ;   doesn't need to be supported and old browsers don't need to be warned.
-; cspheader = "default-src 'none'; manifest-src 'self'; connect-src * blob:; script-src 'self' 'unsafe-eval'; style-src 'self'; font-src 'self'; img-src 'self' data: blob:; media-src blob:; object-src blob:; sandbox allow-same-origin allow-scripts allow-forms allow-popups allow-modals"
+; cspheader = "default-src 'none'; manifest-src 'self'; connect-src * blob:; script-src 'self' 'unsafe-eval' resource:; style-src 'self'; font-src 'self'; img-src 'self' data: blob:; media-src blob:; object-src blob:; sandbox allow-same-origin allow-scripts allow-forms allow-popups allow-modals"
 
 ; stay compatible with PrivateBin Alpha 0.19, less secure
 ; if enabled will use base64.js version 1.7 instead of 2.1.9 and sha1 instead of
